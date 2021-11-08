@@ -6,7 +6,6 @@ Abrahan Nevarez
 """
 from flask import Flask, request
 import requests
-import json
 from flask_cors import CORS
 from flasgger import Swagger
 app = Flask(__name__, static_url_path="/static")
@@ -63,6 +62,18 @@ def get_dog_image():
             response = requests.get(f"https://dog.ceo/api/breed/{breed_name}/images/random")
         return response.json()
 
+app.route("/get_json_input/", methods=["POST"])
+def get_json_input():
+    """
+    Gets json input from a request such as from a frontend client
+    """
+    content = request.json
+    """
+    Parses specific content from the client
+    """
+    first_name = content["first_name"]
+    last_name = content["last_name"]
+    return f"Hello {first_name} {last_name}"
 
 if __name__ == "__main__":
     app.run(port=8080)
