@@ -6,16 +6,20 @@ Abrahan Nevarez
 """
 from flask import Flask, request
 import requests
+import json
 from flask_cors import CORS
 from flasgger import Swagger
+
 app = Flask(__name__, static_url_path="/static")
-app.config['SWAGGER'] = {
-    'title': 'Dog Fetching API',
-    'uiversion': 3,
-    'version': '0.1.1'
+app.config["SWAGGER"] = {
+    "title": "Dog Fetching API",
+    "uiversion": 3,
+    "version": "0.1.1",
 }
 CORS(app)
 swagger = Swagger(app)
+
+
 @app.route("/get_dog_breeds/", methods=["GET"])
 def get_dog_breeds():
     """
@@ -30,6 +34,7 @@ def get_dog_breeds():
     response = requests.get("https://dog.ceo/api/breeds/list/all")
     response_json = response.json()
     return response_json["message"]
+
 
 @app.route("/get_dog_image/", methods=["GET"])
 def get_dog_image():
@@ -55,14 +60,19 @@ def get_dog_image():
     """
     if request.method == "GET":
         breed_name = request.args.get("breed_name")
-        if(request.args.get("sub_breed_name") is not None):
+        if request.args.get("sub_breed_name") is not None:
             sub_breed_name = request.args.get("sub_breed_name")
-            response = requests.get(f"https://dog.ceo/api/breed/{breed_name}/{sub_breed_name}/images/random")
+            response = requests.get(
+                f"https://dog.ceo/api/breed/{breed_name}/{sub_breed_name}/images/random"
+            )
         else:
-            response = requests.get(f"https://dog.ceo/api/breed/{breed_name}/images/random")
+            response = requests.get(
+                f"https://dog.ceo/api/breed/{breed_name}/images/random"
+            )
         return response.json()
 
-app.route("/get_json_input/", methods=["POST"])
+
+@app.route("/get_json_input/", methods=["POST"])
 def get_json_input():
     """
     Gets json input from a request such as from a frontend client
@@ -73,7 +83,8 @@ def get_json_input():
     """
     first_name = content["first_name"]
     last_name = content["last_name"]
-    return f"Hello {first_name} {last_name}"
+    return json.dumps(f"Hello {first_name} {last_name}")
+
 
 if __name__ == "__main__":
     app.run(port=8080)
